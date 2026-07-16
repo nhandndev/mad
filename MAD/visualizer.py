@@ -14,7 +14,7 @@ import networkx as nx
 import pandas as pd
 import seaborn as sns
 
-def plot_network_communities(G, communities, title="Network Communities"):
+def plot_network_communities(G, communities, title="Network Communities", subfolder=""):
     """
     Trực quan hóa đồ thị mạng lưới, tô màu các node khác nhau để phân biệt các cộng đồng.
     Xuất đồ thị ra file ảnh định dạng PNG.
@@ -60,8 +60,11 @@ def plot_network_communities(G, communities, title="Network Communities"):
     # Tự động căn chỉnh các thành phần cho vừa vặn với kích thước hình
     plt.tight_layout()
     
-    # Lưu hình ảnh ra file, thay thế khoảng trắng trong tiêu đề bằng dấu gạch dưới và lưu vào folder result
-    file_path = f"result/{title.replace(' ', '_')}.png"
+    # Tạo thư mục con nếu có, sau đó lưu hình ảnh ra file
+    folder_path = f"result/{subfolder}" if subfolder else "result"
+    os.makedirs(folder_path, exist_ok=True)
+    
+    file_path = f"{folder_path}/{title.replace(' ', '_')}.png"
     plt.savefig(file_path)
     
     # Đóng đồ thị để giải phóng bộ nhớ

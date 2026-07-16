@@ -47,12 +47,12 @@ def run_experiment():
     # Chạy thử Louvain trên mạng gốc chưa bị cắt tỉa
     init_comms_l, _, _ = detect_louvain(G)
     # Xuất ảnh mạng lưới gốc ở trạng thái nguyên bản (theo Louvain)
-    plot_network_communities(G, init_comms_l, "Karate_Club_Original_Louvain")
+    plot_network_communities(G, init_comms_l, "Karate_Club_Original_Louvain", subfolder="0pct")
     
     # Chạy thử Girvan-Newman trên mạng gốc chưa bị cắt tỉa
     init_comms_gn, _, _ = detect_girvan_newman(G)
     # Xuất ảnh mạng lưới gốc ở trạng thái nguyên bản (theo Girvan-Newman)
-    plot_network_communities(G, init_comms_gn, "Karate_Club_Original_GirvanNewman")
+    plot_network_communities(G, init_comms_gn, "Karate_Club_Original_GirvanNewman", subfolder="0pct")
     
     # --- BƯỚC 2: TÍNH TOÁN CENTRALITY ---
     # Tính các chỉ số trung tâm (Degree, Closeness, Betweenness) cho đồ thị gốc
@@ -61,8 +61,8 @@ def run_experiment():
     # Định nghĩa danh sách các chỉ số cần test
     metrics = ['degree', 'closeness', 'betweenness']
     
-    # Định nghĩa các tỷ lệ phần trăm xóa node (0%, 5%, 10%, 15%, 20%)
-    removal_percentages = [0.0, 0.05, 0.10, 0.15, 0.20]
+    # Định nghĩa các tỷ lệ phần trăm xóa node (từ 0% lên tới 40% để xem sức chịu đựng tối đa)
+    removal_percentages = [0.0, 0.05, 0.10, 0.15, 0.20, 0.25, 0.30, 0.35, 0.40]
     
     # Khởi tạo danh sách rỗng để lưu trữ các số liệu đo lường ở mỗi vòng lặp
     results = []
@@ -108,13 +108,15 @@ def run_experiment():
             })
             
             # -- TRỰC QUAN HÓA SỰ ĐỨT GÃY --
-            # Đặc biệt lấy mốc xóa 10% (0.10) làm đại diện để vẽ ảnh đồ thị bị phá hỏng cho cả 3 chỉ số
-            if p == 0.10:
+            # Vẽ ảnh đồ thị bị phá hỏng ở các mốc cắt quan trọng: 10%, 20%, 30%, 40%
+            if p in [0.10, 0.20, 0.30, 0.40]:
+                pct_str = int(p * 100)
+                subfolder_name = f"{pct_str}pct"
                 # Xuất ảnh phân nhóm bằng thuật toán Louvain
-                plot_network_communities(G_filtered, comms_l, f"Karate_Club_Removed_10pct_{metric.capitalize()}_Louvain")
+                plot_network_communities(G_filtered, comms_l, f"Karate_Club_Removed_{pct_str}pct_{metric.capitalize()}_Louvain", subfolder=subfolder_name)
                 
                 # Xuất ảnh phân nhóm bằng thuật toán Girvan-Newman
-                plot_network_communities(G_filtered, comms_gn, f"Karate_Club_Removed_10pct_{metric.capitalize()}_GirvanNewman")
+                plot_network_communities(G_filtered, comms_gn, f"Karate_Club_Removed_{pct_str}pct_{metric.capitalize()}_GirvanNewman", subfolder=subfolder_name)
     
     # --- BƯỚC 4: LƯU KẾT QUẢ RA FILE ---
     # Chuyển đổi danh sách kết quả (list of dicts) sang định dạng DataFrame của Pandas
