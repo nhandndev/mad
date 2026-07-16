@@ -1,3 +1,13 @@
+"""
+/**
+ * File: data_loader.py
+ * Phụ trách: Chương (Kỹ sư Quản trị Dữ liệu)
+ * Mô tả:
+ *   - Chuyên nạp và sinh đồ thị mạng lưới.
+ *   - Hàm load_karate_club() tải đồ thị thực tế (Karate Club).
+ *   - Hàm generate_facebook_network() dùng thuật toán Barabási-Albert sinh mạng giả lập (Scale-free).
+ */
+"""
 import networkx as nx
 
 def load_karate_club():

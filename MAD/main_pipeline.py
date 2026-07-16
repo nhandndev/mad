@@ -1,4 +1,16 @@
+"""
+/**
+ * File: main_pipeline.py
+ * Phụ trách: Nhân (Leader / Quản lý Đường ống)
+ * Mô tả:
+ *   - Đây là file trung tâm (Entry point) điều phối toàn bộ hệ thống.
+ *   - Chạy vòng lặp thực nghiệm tự động đi qua 5 mức cắt tỉa và 3 loại Centrality.
+ *   - Kết nối dữ liệu từ lúc nạp đồ thị, qua bộ lọc, vào thuật toán phân cụm và cuối cùng vẽ biểu đồ.
+ *   - Tự động xuất số liệu đo đạc ra file Excel (CSV).
+ */
+"""
 import sys
+import os
 import codecs
 
 # Đoạn code ép kiểu encoding stdout về UTF-8 để hiển thị tiếng Việt không bị lỗi trong Terminal Windows
@@ -25,15 +37,22 @@ def run_experiment():
     # Bắt đầu chạy hệ thống
     print("=== BẮT ĐẦU ĐƯỜNG ỐNG THỰC NGHIỆM TỰ ĐỘNG ===")
     
+    # Tạo thư mục result để chứa toàn bộ kết quả đầu ra
+    os.makedirs('result', exist_ok=True)
+    
     # --- BƯỚC 1: NẠP DỮ LIỆU ---
     # Nạp mạng lưới Karate Club vào biến G
     G = load_karate_club()
     
     # Chạy thử Louvain trên mạng gốc chưa bị cắt tỉa
-    init_comms, _, _ = detect_louvain(G)
+    init_comms_l, _, _ = detect_louvain(G)
+    # Xuất ảnh mạng lưới gốc ở trạng thái nguyên bản (theo Louvain)
+    plot_network_communities(G, init_comms_l, "Karate_Club_Original_Louvain")
     
-    # Xuất ảnh mạng lưới gốc ở trạng thái nguyên bản
-    plot_network_communities(G, init_comms, "Karate_Club_Original")
+    # Chạy thử Girvan-Newman trên mạng gốc chưa bị cắt tỉa
+    init_comms_gn, _, _ = detect_girvan_newman(G)
+    # Xuất ảnh mạng lưới gốc ở trạng thái nguyên bản (theo Girvan-Newman)
+    plot_network_communities(G, init_comms_gn, "Karate_Club_Original_GirvanNewman")
     
     # --- BƯỚC 2: TÍNH TOÁN CENTRALITY ---
     # Tính các chỉ số trung tâm (Degree, Closeness, Betweenness) cho đồ thị gốc
@@ -91,13 +110,16 @@ def run_experiment():
             # -- TRỰC QUAN HÓA SỰ ĐỨT GÃY --
             # Đặc biệt lấy mốc xóa 10% (0.10) làm đại diện để vẽ ảnh đồ thị bị phá hỏng cho cả 3 chỉ số
             if p == 0.10:
-                # Xuất ảnh mạng lưới bị cắt 10% (VD: Karate_Club_Removed_10pct_Degree.png)
-                plot_network_communities(G_filtered, comms_l, f"Karate_Club_Removed_10pct_{metric.capitalize()}")
+                # Xuất ảnh phân nhóm bằng thuật toán Louvain
+                plot_network_communities(G_filtered, comms_l, f"Karate_Club_Removed_10pct_{metric.capitalize()}_Louvain")
+                
+                # Xuất ảnh phân nhóm bằng thuật toán Girvan-Newman
+                plot_network_communities(G_filtered, comms_gn, f"Karate_Club_Removed_10pct_{metric.capitalize()}_GirvanNewman")
     
     # --- BƯỚC 4: LƯU KẾT QUẢ RA FILE ---
     # Chuyển đổi danh sách kết quả (list of dicts) sang định dạng DataFrame của Pandas
     df = pd.DataFrame(results)
-    csv_filename = "experimental_results.csv"
+    csv_filename = "result/experimental_results.csv"
     
     # Ghi dữ liệu DataFrame ra file CSV, bỏ đánh chỉ mục (index=False)
     df.to_csv(csv_filename, index=False)

@@ -1,3 +1,14 @@
+"""
+/**
+ * File: visualizer.py
+ * Phụ trách: Huy (Kỹ sư Trực quan hóa & Phân tích)
+ * Mô tả:
+ *   - Chịu trách nhiệm biến các ma trận số khô khan thành hình ảnh có ý nghĩa.
+ *   - Hàm plot_network_communities() dàn trang các node ra không gian 2D và tô màu phân nhóm.
+ *   - Hàm plot_modularity_trend() đọc file CSV để vẽ đồ thị đường (Lineplot) so sánh hiệu năng.
+ */
+"""
+import os
 import matplotlib.pyplot as plt
 import networkx as nx
 import pandas as pd
@@ -49,14 +60,15 @@ def plot_network_communities(G, communities, title="Network Communities"):
     # Tự động căn chỉnh các thành phần cho vừa vặn với kích thước hình
     plt.tight_layout()
     
-    # Lưu hình ảnh ra file, thay thế khoảng trắng trong tiêu đề bằng dấu gạch dưới
-    plt.savefig(f"{title.replace(' ', '_')}.png")
+    # Lưu hình ảnh ra file, thay thế khoảng trắng trong tiêu đề bằng dấu gạch dưới và lưu vào folder result
+    file_path = f"result/{title.replace(' ', '_')}.png"
+    plt.savefig(file_path)
     
     # Đóng đồ thị để giải phóng bộ nhớ
     plt.close()
     
     # In thông báo xác nhận đã xuất ảnh
-    print(f"[Huy] Đã xuất biểu đồ mạng lưới: {title.replace(' ', '_')}.png")
+    print(f"[Huy] Đã xuất biểu đồ mạng lưới: {file_path}")
 
 def plot_modularity_trend(csv_file):
     """
@@ -103,11 +115,12 @@ def plot_modularity_trend(csv_file):
     # Căn chỉnh bố cục để không bị chữ đè lên nhau
     plt.tight_layout()
     
-    # Xuất toàn bộ biểu đồ xu hướng ra file ảnh chung
-    plt.savefig("Modularity_Trend.png")
+    # Xuất toàn bộ biểu đồ xu hướng ra file ảnh chung trong folder result
+    file_path = "result/Modularity_Trend.png"
+    plt.savefig(file_path)
     
     # Đóng đồ thị giải phóng tài nguyên
     plt.close()
     
     # In ra thông báo hoàn tất
-    print("[Huy] Đã xuất biểu đồ xu hướng: Modularity_Trend.png (đã tách 2 khung)")
+    print(f"[Huy] Đã xuất biểu đồ xu hướng: {file_path} (đã tách 2 khung)")

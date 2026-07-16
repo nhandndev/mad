@@ -1,3 +1,13 @@
+"""
+/**
+ * File: centrality_filter.py
+ * Phụ trách: Chung (Kỹ sư Tiền xử lý Hệ thống)
+ * Mô tả:
+ *   - Module tính toán các chỉ số toán học: Degree, Closeness, Betweenness Centrality.
+ *   - Thực thi kịch bản "tấn công" bằng cách sắp xếp và cắt bỏ các node VIP nhất 
+ *     để làm suy yếu hoặc phá vỡ cấu trúc đồ thị.
+ */
+"""
 import networkx as nx
 
 def calculate_centralities(G):
